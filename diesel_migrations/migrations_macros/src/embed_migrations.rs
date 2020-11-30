@@ -45,10 +45,14 @@ pub fn expand(path: String) -> proc_macro2::TokenStream {
                     conn.batch_execute(self.up_sql).map_err(Into::into)
                 }
 
-                fn revert(&self, _conn: &SimpleConnection) -> Result<(), RunMigrationsError> {
-                    unreachable!()
-                }
+            fn revert(&self, _conn: &SimpleConnection) -> Result<(), RunMigrationsError> {
+                unreachable!()
             }
+        }
+
+         pub fn any_pending_migrations<C: MigrationConnection>(conn: &C) -> Result<bool, RunMigrationsError> {
+            any_pending_migrations_from(conn, ALL_MIGRATIONS.iter().map(|v| *v))        }
+    );
 
             pub fn run<C: MigrationConnection>(conn: &C) -> Result<(), RunMigrationsError> {
                 run_with_output(conn, &mut io::sink())
